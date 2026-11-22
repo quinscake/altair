@@ -175,7 +175,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 .alert.k-nogo{--a:var(--nogo);background:color-mix(in srgb,var(--nogo) 8%,var(--hull))}
 .alert.k-build{--a:var(--blue-hi)}
 .alert.is-quote{display:block;padding:0;--a:#FFC93A}
-.alert.is-quote button{display:block;width:100%;text-align:left;padding:11px 13px 10px;-webkit-user-select:text;user-select:text}
+.alert.is-quote .qt{padding:11px 13px 10px}
 .alert.is-quote q{display:block;quotes:"\201C" "\201D";font-size:14px;line-height:1.45;color:var(--ink);font-style:italic}
 .alert.is-quote .by{display:block;margin-top:5px;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
 
@@ -1395,19 +1395,19 @@ const Quote = (() => {
   let st = null;
   try { st = JSON.parse(localStorage.getItem(K) || 'null'); } catch(e){}
   const deal = () => { const a = QUOTES.map((_, i) => i); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  if (!st || !Array.isArray(st.o) || st.o.length !== QUOTES.length) st = {o:deal(), i:-1, at:0};
-  function next(){
+  if (!st || !Array.isArray(st.o) || st.o.length !== QUOTES.length || typeof st.i !== 'number') st = {o:deal(), i:-1, d:''};
+  // one quote per day: it only moves on when the date changes, never on refresh
+  function check(){
+    const d = today();
+    if (st.d === d && st.i >= 0) return false;
     st.i++;
     if (st.i >= st.o.length){ const last = st.o[st.o.length - 1]; st.o = deal(); if (st.o[0] === last) [st.o[0], st.o[1]] = [st.o[1], st.o[0]]; st.i = 0; }
-    st.at = Date.now();
+    st.d = d;
     try { localStorage.setItem(K, JSON.stringify(st)); } catch(e){}
+    return true;
   }
-  next();   // a new one every time the app opens
-  return {
-    cur: () => QUOTES[st.o[st.i]],
-    next,
-    stale: () => Date.now() - st.at > 30*60*1000
-  };
+  check();
+  return { cur: () => QUOTES[st.o[st.i]], check };
 })();
 
 function alertMsg(){
@@ -1429,7 +1429,7 @@ function renderAlert(){
   if (a.k==='hold' || a.k==='nogo'){ el.className = 'alert k-'+a.k; el.textContent = a.t; return; }
   const [q, by] = Quote.cur();
   el.className = 'alert is-quote';
-  el.innerHTML = `<button data-act="quote" aria-label="Next quote"><q>${q}</q><span class="by">— ${by}</span></button>`;
+  el.innerHTML = `<div class="qt"><q>${q}</q><span class="by">— ${by}</span></div>`;
 }
 
 function metaHtml(id){
@@ -1745,7 +1745,6 @@ document.addEventListener('click', ev=>{
       if (e && e.k && t.fc[e.k]) { t.fc[e.k]--; if (!t.fc[e.k]) delete t.fc[e.k]; }
       markDirty('state'); break;
     }
-    case 'quote': Quote.next(); renderAlert(); return;
     case 'vit': { const k = b.dataset.k; t.vit[k] = !t.vit[k]; markDirty('state'); break; }
     case 'bw': setBody(S.state.profile.kg + Number(b.dataset.n)); break;
     case 'pf': { const p = S.state.profile; p.pf = Math.min(2.2, Math.max(1.0, Math.round((p.pf + Number(b.dataset.n))*10)/10)); markDirty('state'); break; }
@@ -1822,12 +1821,12 @@ drawStars(); Tree.init(); render();
 window.addEventListener('resize', ()=>{ clearTimeout(window.__rs); window.__rs = setTimeout(drawStars, 200); });
 document.addEventListener('visibilitychange', ()=>{
   if (document.visibilityState!=='visible') return;
-  if (Quote.stale()) { Quote.next(); renderAlert(); }
+  if (Quote.check()) renderAlert();
   if (rollover()) { markDirty('state','history'); render(); }
   if (db && uid && pending===0 && dirty.size===0) pull(false);
   Gh.pull(false);
 });
-setInterval(()=>{ if (rollover()) { markDirty('state','history'); render(); } }, 60000);
+setInterval(()=>{ if (rollover()) { markDirty('state','history'); render(); } if (Quote.check()) renderAlert(); }, 60000);
 ['gesturestart','gesturechange','gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), {passive:false}));
 document.addEventListener('touchmove', e => { if (e.touches.length > 1 || (e.scale && e.scale !== 1)) e.preventDefault(); }, {passive:false});
 connect();
