@@ -2,8 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#02040A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Altair">
+<meta name="application-name" content="Altair">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <title>Altair</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +41,9 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;overscroll-behavior:none}
+body{overscroll-behavior:none}
+button,.tabs,.top,.chip,.pick,.vit,.lens,.poll{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(11,61,145,.28),transparent 60%),var(--space);background-attachment:fixed;color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 #stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .app{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(100px + env(safe-area-inset-bottom))}
@@ -117,13 +129,14 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 
 /* hero: statue scan */
 .hero{display:grid;gap:8px;--stat:var(--blue-hi)}
-.hero-top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
-.score{font-family:var(--f-mono);font-size:36px;font-weight:600;line-height:1;margin-top:4px}
-.score small{font-size:15px;color:var(--dim);font-weight:500}
-.hero-r{display:grid;justify-items:end;gap:6px}
+.hero-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ready{display:flex;align-items:baseline;gap:8px}
+.score{font-family:var(--f-mono);font-size:26px;font-weight:600;line-height:1}
+.score small{font-size:13px;color:var(--dim);font-weight:500}
+.hero-r{display:flex;align-items:center;gap:8px;min-width:0}
 .stat-chip{font-family:var(--f-display);font-size:9px;letter-spacing:.18em;padding:6px 9px 5px;border-radius:3px;border:1px solid var(--stat);color:var(--stat);background:color-mix(in srgb,var(--stat) 10%,transparent);white-space:nowrap}
-.rank{font-size:13px;font-weight:600;color:var(--dim)}
-.scan{position:relative;aspect-ratio:0.82;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:radial-gradient(90% 60% at 50% 30%,rgba(11,61,145,.22),transparent 70%),linear-gradient(180deg,#040917,#02040A)}
+.rank{font-size:12.5px;font-weight:600;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scan{position:relative;aspect-ratio:1.1;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:radial-gradient(90% 60% at 50% 30%,rgba(11,61,145,.22),transparent 70%),linear-gradient(180deg,#040917,#02040A)}
 .scan canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .scan-cap{position:absolute;left:10px;top:10px;font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;color:var(--dim)}
 .scan-cap b{color:var(--ink);font-weight:600}
@@ -159,6 +172,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 .alert.k-hold{--a:var(--hold)}
 .alert.k-nogo{--a:var(--nogo);background:color-mix(in srgb,var(--nogo) 8%,var(--hull))}
 .alert.k-build{--a:var(--blue-hi)}
+.alert.is-quote{display:block;padding:0;--a:#FFC93A}
+.alert.is-quote button{display:block;width:100%;text-align:left;padding:11px 13px 10px;-webkit-user-select:text;user-select:text}
+.alert.is-quote q{display:block;quotes:"\201C" "\201D";font-size:14px;line-height:1.45;color:var(--ink);font-style:italic}
+.alert.is-quote .by{display:block;margin-top:5px;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
 
 /* session */
 .picker{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:6px}
@@ -223,8 +240,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 .fuel.hit .bar span{background:var(--go)}
 
 /* vitamins */
+#vitPanel{padding:11px 12px 12px}
+#vitPanel .ph{margin-bottom:8px}
 .vits{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.vit{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:8px;padding:10px;border-radius:var(--r);border:1px solid var(--line);background:var(--hull-2);text-align:left}
+.vit{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:8px;padding:8px 10px;border-radius:var(--r);border:1px solid var(--line);background:var(--hull-2);text-align:left}
 .vit .box{width:16px;height:16px;border:1.5px solid var(--faint);border-radius:3px;display:grid;place-items:center}
 .vit .box svg{width:12px;height:12px;opacity:0}
 .vit .nm{font-weight:600;font-size:13px;line-height:1.2}
@@ -330,6 +349,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
   .params{position:absolute;right:32px;top:80px;width:380px;z-index:20;margin-top:0;box-shadow:0 24px 60px rgba(0,0,0,.7)}
   .view{margin-top:22px;gap:20px}
   #v-today.on{grid-template-columns:minmax(380px,440px) 1fr;align-items:start}
+  .scan{aspect-ratio:1.05}
   #v-log.on{grid-template-columns:1fr 1fr;align-items:start}
   #programList{grid-template-columns:repeat(3,1fr);align-items:start}
   .toast{bottom:28px}
@@ -340,6 +360,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 @media (prefers-reduced-motion:reduce){
   .params{animation:none}
   *{transition:none!important}
+}
+@media (max-width:380px){
+  .rank{display:none}
 }
 @media (max-width:360px){
   .station .val{font-size:12.5px}
@@ -401,16 +424,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
     <div class="col col-a">
       <div class="hero" id="hero">
         <div class="hero-top">
-          <div><div class="k">Readiness</div><div class="score" id="score">0<small>%</small></div></div>
+          <div class="ready"><div class="k">Readiness</div><div class="score" id="score">0<small>%</small></div></div>
           <div class="hero-r"><div class="stat-chip" id="statChip">PRE-FLIGHT</div><div class="rank" id="rank">Astronaut Candidate</div></div>
         </div>
+        <div class="rankline"><div class="rankbar"><span id="rankBar" style="width:0%"></span></div><div class="rank-sub" id="rankSub"></div></div>
         <div class="scan" id="scan">
           <canvas id="treeCv" role="img" aria-label="Cosmic tree. Three limbs for Push, Pull and Legs glow when trained and wither when neglected."></canvas>
           <div class="scan-cap" id="scanCap"></div>
           <div class="scan-tag" id="scanTag">SESSION LOGGED</div>
           <div class="readouts" id="readouts"></div>
         </div>
-        <div class="rankline"><div class="rankbar"><span id="rankBar" style="width:0%"></span></div><div class="rank-sub" id="rankSub"></div></div>
+      </div>
+      <div class="panel" id="vitPanel">
+        <div class="ph"><span class="k">Vitamins</span><span class="aside" id="vitAside">0/3</span></div>
+        <div class="vits" id="vits"></div>
       </div>
     </div>
 
@@ -445,10 +472,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
         <p class="small muted" style="margin:10px 0 0">Grams per cooked piece, approx.</p>
       </div>
 
-      <div class="panel">
-        <div class="ph"><span class="k">Vitamins</span><span class="aside" id="vitAside">0/3</span></div>
-        <div class="vits" id="vits"></div>
-      </div>
     </div>
   </section>
 
@@ -1276,6 +1299,118 @@ function coolingGroup(){
   }
   return worst;
 }
+const QUOTES = [
+ ["That's one small step for man, one giant leap for mankind.","Neil Armstrong"],
+ ["We choose to go to the Moon… not because they are easy, but because they are hard.","John F. Kennedy"],
+ ["The Earth is the cradle of humanity, but one cannot remain in the cradle forever.","Konstantin Tsiolkovsky"],
+ ["Poyekhali! Let's go!","Yuri Gagarin, at liftoff"],
+ ["Per aspera ad astra. Through hardships to the stars.","Latin proverb"],
+ ["There is no easy way from the earth to the stars.","Seneca"],
+ ["Remember to look up at the stars and not down at your feet.","Stephen Hawking"],
+ ["However difficult life may seem, there is always something you can do and succeed at.","Stephen Hawking"],
+ ["We are all in the gutter, but some of us are looking at the stars.","Oscar Wilde"],
+ ["Keep your eyes on the stars, and your feet on the ground.","Theodore Roosevelt"],
+ ["Hitch your wagon to a star.","Ralph Waldo Emerson"],
+ ["It is difficult to say what is impossible, for the dream of yesterday is the hope of today and the reality of tomorrow.","Robert H. Goddard"],
+ ["Never be limited by other people's limited imaginations.","Mae Jemison"],
+ ["The path from dreams to success does exist.","Kalpana Chawla"],
+ ["Don't be afraid to reach for the stars.","Ellen Ochoa"],
+ ["Space flight will never tolerate carelessness, incapacity, and neglect.","Gene Kranz"],
+ ["Tough and competent.","Gene Kranz"],
+ ["Sweat the small stuff.","Chris Hadfield"],
+ ["Exploration is in our nature. We began as wanderers, and we are wanderers still.","Carl Sagan"],
+ ["We are made of star-stuff.","Carl Sagan"],
+ ["Imagination will often carry us to worlds that never were. But without it we go nowhere.","Carl Sagan"],
+ ["The only way of discovering the limits of the possible is to venture a little way past them into the impossible.","Arthur C. Clarke"],
+ ["I don't know anything with certainty, but seeing the stars makes me dream.","Vincent van Gogh"],
+ ["Aim at the sun, and you may not reach it; but your arrow will fly far higher than if aimed at an object on a level with yourself.","Joel Hawes"],
+ ["Equipped with his five senses, man explores the universe around him and calls the adventure Science.","Edwin Hubble"],
+ ["Imagination is more important than knowledge.","Albert Einstein"],
+ ["If I have seen further, it is by standing on the shoulders of giants.","Isaac Newton"],
+ ["Nothing in life is to be feared, it is only to be understood.","Marie Curie"],
+ ["I was taught that the way of progress was neither swift nor easy.","Marie Curie"],
+ ["What is now proved was once only imagined.","William Blake"],
+ ["Because it's there.","George Mallory, on Everest"],
+ ["It is not the mountain we conquer, but ourselves.","Edmund Hillary"],
+ ["Stars can't shine without darkness.","Unknown"],
+ ["If one advances confidently in the direction of his dreams… he will meet with a success unexpected in common hours.","Henry David Thoreau"],
+ ["Dreams don't work unless you do.","John C. Maxwell"],
+ ["A dream doesn't become reality through magic; it takes sweat, determination and hard work.","Colin Powell"],
+ ["You are never too old to set another goal or to dream a new dream.","Les Brown"],
+ ["Do one thing every day that scares you.","Mary Schmich"],
+ ["Everything you've ever wanted is on the other side of fear.","George Addair"],
+ ["Whether you think you can, or you think you can't, you're right.","Henry Ford"],
+ ["The only impossible journey is the one you never begin.","Tony Robbins"],
+ ["A ship in harbor is safe, but that is not what ships are built for.","John A. Shedd"],
+ ["Fortune favors the bold.","Virgil"],
+ ["Start where you are. Use what you have. Do what you can.","Arthur Ashe"],
+ ["The credit belongs to the man who is actually in the arena.","Theodore Roosevelt"],
+ ["He who has a why to live can bear almost any how.","Friedrich Nietzsche"],
+ ["Today's accomplishments were yesterday's impossibilities.","Robert H. Schuller"],
+ ["The difference between the impossible and the possible lies in a person's determination.","Tommy Lasorda"],
+ ["I am always doing that which I cannot do, in order that I may learn how to do it.","Pablo Picasso"],
+ ["Inspiration exists, but it has to find you working.","Pablo Picasso"],
+ ["Great things are done by a series of small things brought together.","Vincent van Gogh"],
+ ["If you hear a voice within you say 'you cannot paint,' then by all means paint, and that voice will be silenced.","Vincent van Gogh"],
+ ["The only way to do great work is to love what you do.","Steve Jobs"],
+ ["We are what we repeatedly do. Excellence, then, is not an act, but a habit.","Will Durant"],
+ ["A journey of a thousand miles begins with a single step.","Lao Tzu"],
+ ["Success is the sum of small efforts, repeated day in and day out.","Robert Collier"],
+ ["Fall seven times, stand up eight.","Japanese proverb"],
+ ["Little by little, one travels far.","Spanish proverb"],
+ ["Strength does not come from physical capacity. It comes from an indomitable will.","Mahatma Gandhi"],
+ ["I hated every minute of training, but I said, 'Don't quit. Suffer now and live the rest of your life as a champion.'","Muhammad Ali"],
+ ["Don't count the days, make the days count.","Muhammad Ali"],
+ ["Champions keep playing until they get it right.","Billie Jean King"],
+ ["Hard work beats talent when talent doesn't work hard.","Tim Notke"],
+ ["You miss 100% of the shots you don't take.","Wayne Gretzky"],
+ ["I've failed over and over and over again in my life. And that is why I succeed.","Michael Jordan"],
+ ["What you do every day matters more than what you do once in a while.","Gretchen Rubin"],
+ ["Motivation is what gets you started. Habit is what keeps you going.","Jim Ryun"],
+ ["Discipline is the bridge between goals and accomplishment.","Jim Rohn"],
+ ["Success is nothing more than a few simple disciplines, practiced every day.","Jim Rohn"],
+ ["We must all suffer one of two things: the pain of discipline or the pain of regret.","Jim Rohn"],
+ ["Show up, show up, show up, and after a while the muse shows up, too.","Isabel Allende"],
+ ["The secret of your future is hidden in your daily routine.","Mike Murdock"],
+ ["Energy and persistence conquer all things.","Benjamin Franklin"],
+ ["Well done is better than well said.","Benjamin Franklin"],
+ ["Our greatest glory is not in never falling, but in rising every time we fall.","Oliver Goldsmith"],
+ ["Perseverance is not a long race; it is many short races one after the other.","Walter Elliot"],
+ ["A river cuts through rock not because of its power but because of its persistence.","Jim Watkins"],
+ ["Don't watch the clock; do what it does. Keep going.","Sam Levenson"],
+ ["Amateurs sit and wait for inspiration, the rest of us just get up and go to work.","Stephen King"],
+ ["Genius is one percent inspiration and ninety-nine percent perspiration.","Thomas Edison"],
+ ["Difficulties strengthen the mind, as labor does the body.","Seneca"],
+ ["First say to yourself what you would be; and then do what you have to do.","Epictetus"],
+ ["The impediment to action advances action. What stands in the way becomes the way.","Marcus Aurelius"],
+ ["Waste no more time arguing about what a good man should be. Be one.","Marcus Aurelius"],
+ ["Well begun is half done.","Aristotle"],
+ ["The best time to plant a tree was 20 years ago. The second best time is now.","Chinese proverb"],
+ ["Someone's sitting in the shade today because someone planted a tree a long time ago.","Warren Buffett"],
+ ["I am not afraid of storms, for I am learning how to sail my ship.","Louisa May Alcott"],
+ ["The best way out is always through.","Robert Frost"],
+ ["Kapag may tiyaga, may nilaga. (Patience brings its reward.)","Filipino proverb"]
+];
+const Quote = (() => {
+  const K = 'altair-quotes';
+  let st = null;
+  try { st = JSON.parse(localStorage.getItem(K) || 'null'); } catch(e){}
+  const deal = () => { const a = QUOTES.map((_, i) => i); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  if (!st || !Array.isArray(st.o) || st.o.length !== QUOTES.length) st = {o:deal(), i:-1, at:0};
+  function next(){
+    st.i++;
+    if (st.i >= st.o.length){ const last = st.o[st.o.length - 1]; st.o = deal(); if (st.o[0] === last) [st.o[0], st.o[1]] = [st.o[1], st.o[0]]; st.i = 0; }
+    st.at = Date.now();
+    try { localStorage.setItem(K, JSON.stringify(st)); } catch(e){}
+  }
+  next();   // a new one every time the app opens
+  return {
+    cur: () => QUOTES[st.o[st.i]],
+    next,
+    stale: () => Date.now() - st.at > 30*60*1000
+  };
+})();
+
 function alertMsg(){
   const ds = daysSinceLast(), wc = weekCount(), target = S.state.profile.target, P = plan();
   const dow = parseD(today()).getDay(), nm = missionOf(P.next).name, inf = P.info[P.next];
@@ -1290,7 +1425,13 @@ function alertMsg(){
   if (wc>=target) return {k:'go', t:`Week target hit (${wc}/${target}).`};
   return {k:'go', t:`On track: ${wc}/${target} this week. Next: ${nm}.`};
 }
-function renderAlert(){ const a = alertMsg(), el = $('alert'); el.className = 'alert k-'+a.k; el.textContent = a.t; }
+function renderAlert(){
+  const a = alertMsg(), el = $('alert');
+  if (a.k==='hold' || a.k==='nogo'){ el.className = 'alert k-'+a.k; el.textContent = a.t; return; }
+  const [q, by] = Quote.cur();
+  el.className = 'alert is-quote';
+  el.innerHTML = `<button data-act="quote" aria-label="Next quote"><q>${q}</q><span class="by">— ${by}</span></button>`;
+}
 
 function metaHtml(id){
   const row = rowState(id), L = lastEntry(id), sg = suggest(id), parts = [`<span>${slotSpec(T().m,id).rx.replace(/ × /,'×')}</span>`];
@@ -1605,6 +1746,7 @@ document.addEventListener('click', ev=>{
       if (e && e.k && t.fc[e.k]) { t.fc[e.k]--; if (!t.fc[e.k]) delete t.fc[e.k]; }
       markDirty('state'); break;
     }
+    case 'quote': Quote.next(); renderAlert(); return;
     case 'vit': { const k = b.dataset.k; t.vit[k] = !t.vit[k]; markDirty('state'); break; }
     case 'bw': setBody(S.state.profile.kg + Number(b.dataset.n)); break;
     case 'pf': { const p = S.state.profile; p.pf = Math.min(2.2, Math.max(1.0, Math.round((p.pf + Number(b.dataset.n))*10)/10)); markDirty('state'); break; }
@@ -1681,11 +1823,14 @@ drawStars(); Tree.init(); render();
 window.addEventListener('resize', ()=>{ clearTimeout(window.__rs); window.__rs = setTimeout(drawStars, 200); });
 document.addEventListener('visibilitychange', ()=>{
   if (document.visibilityState!=='visible') return;
+  if (Quote.stale()) { Quote.next(); renderAlert(); }
   if (rollover()) { markDirty('state','history'); render(); }
   if (db && uid && pending===0 && dirty.size===0) pull(false);
   Gh.pull(false);
 });
 setInterval(()=>{ if (rollover()) { markDirty('state','history'); render(); } }, 60000);
+['gesturestart','gesturechange','gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), {passive:false}));
+document.addEventListener('touchmove', e => { if (e.touches.length > 1 || (e.scale && e.scale !== 1)) e.preventDefault(); }, {passive:false});
 connect();
 Gh.init();
 </script>

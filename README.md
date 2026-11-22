@@ -12,7 +12,8 @@ The whole app is one file, `index.html`. Your data does not live in this repo. I
 3. Leave it otherwise empty. Altair creates `data.json` on its first sync.
 
 ### 2. App repo (this one)
-1. Create a repository named `altair` and upload `index.html` and this `README.md`.
+1. Create a repository named `altair` and upload all of these files together (drag them in at once):
+   `index.html`, `manifest.json`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `README.md`
 2. Go to **Settings → Pages**. Under Source, choose **Deploy from a branch**, then pick `main` and `/ (root)`, and save.
 3. After a minute the app is live at `https://<your-username>.github.io/altair/`.
 
@@ -36,6 +37,11 @@ GitHub Pages on a free account needs this repo to be **public**. That's fine, be
 4. Tap **Save and sync**. The status should read **Saved to GitHub**.
 
 Repeat step 4 on each phone or laptop. Every device then reads and writes the same `data.json`.
+
+## Home screen (iPhone)
+1. Open your Pages URL in Safari, tap **Share → Add to Home Screen**. It gets the yellow star icon and opens full screen with no browser bars.
+2. If you added it before the icons existed, delete the old "A" icon first, then add it again. iPhone saves the icon only when you add it.
+3. Set up **GitHub sync inside the home-screen app**. On iPhone it keeps its own storage, separate from Safari, so a token saved in Safari won't carry over.
 
 ## Moving your data from the Claude version
 1. In the Claude-hosted Altair, open **Parameters → GitHub sync → Copy my data**.
