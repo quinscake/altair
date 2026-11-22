@@ -46,7 +46,7 @@ body{overscroll-behavior:none}
 button,.tabs,.top,.chip,.pick,.vit,.lens,.poll{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(11,61,145,.28),transparent 60%),var(--space);background-attachment:fixed;color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 #stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.app{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(100px + env(safe-area-inset-bottom))}
+.app{position:relative;z-index:1;overflow-x:clip;max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(100px + env(safe-area-inset-bottom))}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
 button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outline-offset:2px}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
@@ -118,6 +118,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 .view{display:none;gap:12px;margin-top:14px}
 .view.on{display:grid}
 .col{display:grid;gap:12px;align-content:start;min-width:0}
+.col > *,.hero > *{min-width:0}
 
 /* panels */
 .panel{position:relative;background:linear-gradient(180deg,rgba(10,20,48,.55),rgba(6,12,28,.92));border:1px solid var(--line);border-radius:var(--r);padding:14px;min-width:0}
@@ -135,7 +136,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 .score small{font-size:13px;color:var(--dim);font-weight:500}
 .hero-r{display:flex;align-items:center;gap:8px;min-width:0}
 .stat-chip{font-family:var(--f-display);font-size:9px;letter-spacing:.18em;padding:6px 9px 5px;border-radius:3px;border:1px solid var(--stat);color:var(--stat);background:color-mix(in srgb,var(--stat) 10%,transparent);white-space:nowrap}
-.rank{font-size:12.5px;font-weight:600;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;flex-shrink:0}
 .scan{position:relative;aspect-ratio:1.1;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:radial-gradient(90% 60% at 50% 30%,rgba(11,61,145,.22),transparent 70%),linear-gradient(180deg,#040917,#02040A)}
 .scan canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .scan-cap{position:absolute;left:10px;top:10px;font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;color:var(--dim)}
@@ -155,7 +156,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 .rankline{display:grid;gap:5px}
 .rankbar{height:2px;background:var(--line);overflow:hidden}
 .rankbar span{display:block;height:100%;background:var(--red);transition:width .6s}
-.rank-sub{font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+.rank-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;min-width:0}
+.rank-sub{font-family:var(--f-mono);font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 
 /* go / no-go poll */
 .poll{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--hull)}
@@ -361,9 +363,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
   .params{animation:none}
   *{transition:none!important}
 }
-@media (max-width:380px){
-  .rank{display:none}
-}
 @media (max-width:360px){
   .station .val{font-size:12.5px}
 }
@@ -425,9 +424,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
       <div class="hero" id="hero">
         <div class="hero-top">
           <div class="ready"><div class="k">Readiness</div><div class="score" id="score">0<small>%</small></div></div>
-          <div class="hero-r"><div class="stat-chip" id="statChip">PRE-FLIGHT</div><div class="rank" id="rank">Astronaut Candidate</div></div>
+          <div class="stat-chip" id="statChip">PRE-FLIGHT</div>
         </div>
-        <div class="rankline"><div class="rankbar"><span id="rankBar" style="width:0%"></span></div><div class="rank-sub" id="rankSub"></div></div>
+        <div class="rankline"><div class="rankbar"><span id="rankBar" style="width:0%"></span></div><div class="rank-row"><span class="rank" id="rank">Astronaut Candidate</span><span class="rank-sub" id="rankSub"></span></div></div>
         <div class="scan" id="scan">
           <canvas id="treeCv" role="img" aria-label="Cosmic tree. Three limbs for Push, Pull and Legs glow when trained and wither when neglected."></canvas>
           <div class="scan-cap" id="scanCap"></div>
@@ -435,15 +434,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
           <div class="readouts" id="readouts"></div>
         </div>
       </div>
+    </div>
+
+    <div class="col col-b">
+      <div class="alert" id="alert" role="status"></div>
+      <div class="poll" id="poll" aria-label="Go/no-go poll"></div>
       <div class="panel" id="vitPanel">
         <div class="ph"><span class="k">Vitamins</span><span class="aside" id="vitAside">0/3</span></div>
         <div class="vits" id="vits"></div>
       </div>
-    </div>
-
-    <div class="col col-b">
-      <div class="poll" id="poll" aria-label="Go/no-go poll"></div>
-      <div class="alert" id="alert" role="status"></div>
 
       <div class="panel" id="missionPanel">
         <div class="ph"><span class="k">Session</span><span class="aside" id="missionAside"></span></div>
@@ -1264,7 +1263,7 @@ function renderHero(){
   const nxt = RANKS[ri+1];
   if (nxt){
     $('rankBar').style.width = `${Math.round((total-RANKS[ri][0])/(nxt[0]-RANKS[ri][0])*100)}%`;
-    $('rankSub').textContent = `${total} sessions · ${nxt[0]-total} to ${nxt[1]}`;
+    $('rankSub').textContent = `${nxt[0]-total} more → ${nxt[1]}`;
   } else { $('rankBar').style.width = '100%'; $('rankSub').textContent = `${total} sessions · top rank`; }
   const counted = isCounted(), full = counted && isFull(), tag = $('scanTag');
   tag.textContent = full ? 'SESSION COMPLETE' : 'SESSION LOGGED';
