@@ -191,6 +191,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
 .pick[aria-disabled="true"]{opacity:.42;cursor:not-allowed}
 .pick[aria-disabled="true"]:hover{border-color:var(--line)}
 .pick .rec.due{background:var(--hold);color:#1a1300}
+.pick .rec.done{background:var(--go);color:#03140c}
+.lens[hidden],.tally[hidden]{display:none}
+.cool{display:grid;gap:8px;padding:12px;margin-top:4px;border:1px dashed var(--line);border-radius:var(--r);list-style:none}
+.cool b{font-size:14px}
+.cool p{margin:0;font-size:12.5px;color:var(--dim);line-height:1.45}
+.cool-r{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;padding-top:6px;border-top:1px solid var(--line)}
+.cool-r span:last-child{color:var(--hold)}
 .lens{display:grid;grid-template-columns:repeat(3,1fr);margin-top:8px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .lens button{padding:8px 4px;font-size:12.5px;font-weight:600;color:var(--dim);display:grid;line-height:1.25;border-left:1px solid var(--line)}
 .lens button:first-child{border-left:0}
@@ -449,7 +456,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
         <div class="picker" id="picker"></div>
         <div class="lens" id="lens"></div>
         <ul class="list" id="list"></ul>
-        <div class="tally"><span id="tallyText"></span><div class="bar" style="width:38%"><span id="tallyBar" style="width:0%"></span></div></div>
+        <div class="tally" id="tally"><span id="tallyText"></span><div class="bar" style="width:38%"><span id="tallyBar" style="width:0%"></span></div></div>
       </div>
 
       <div class="panel fuel" id="fuelPanel">
@@ -461,6 +468,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
         <div class="bar"><span id="pBar" style="width:0%"></span></div>
         <div class="k food-h">Chicken · per piece</div>
         <div class="chips" id="foodsChicken"></div>
+        <div class="k food-h">Pork · beef · fish</div>
+        <div class="chips" id="foodsMeat"></div>
         <div class="k food-h">Other</div>
         <div class="chips" id="foodsOther"></div>
         <div class="chips" style="margin-top:8px">
@@ -468,7 +477,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
           <button class="chip ghost" data-act="p" data-n="10">+10 g</button>
           <button class="chip ghost" data-act="pundo">Undo</button>
         </div>
-        <p class="small muted" style="margin:10px 0 0">Grams per cooked piece, approx.</p>
+        <p class="small muted" style="margin:10px 0 0">Approx. Palm ≈ 100 g cooked. A cup counts the meat only, not sauce or veg.</p>
       </div>
 
     </div>
@@ -478,7 +487,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--blue-hi);outlin
   <section class="view" id="v-program" aria-label="Program and lift levels">
     <div class="panel">
       <div class="ph"><span class="k">Flight plan</span><span class="aside">2–3 days / week</span></div>
-      <p class="prose">NEXT = the group most behind that has had 2 full rest days (Tue → Fri). 7+ days behind becomes DUE and is locked in.</p>
+      <p class="prose">NEXT = the group most behind that has had 2 full rest days (Tue → Fri). 7+ days behind becomes DUE and is locked in. Groups in cooldown can't be checked.</p>
+      <p class="prose">Two sessions in one day? Finish the first, then NEXT shows what's still open. Both groups then cool down.</p>
       <p class="prose muted"><span class="pri"></span> in Short. Rest ~2 min between sets. Stop 1–2 reps before failure. TOP = every set hit the top of the rep range → weight goes up next time.</p>
     </div>
     <div id="programList"></div>
@@ -611,7 +621,8 @@ const RANKS = [[0,'Astronaut Candidate'],[6,'Basic Training Graduate'],[16,'Miss
 const VITS = [{k:'c',nm:'Vit C',hint:'Any time'},{k:'dha',nm:'DHA',hint:'With a meal'},{k:'zn',nm:'Zinc',hint:'With food'}];
 const FOODS = [
   {k:'thigh',nm:'Thigh',n:13,c:1},{k:'drum',nm:'Drumstick',n:12,c:1},{k:'breast',nm:'Breast',n:26,c:1},{k:'wing',nm:'Wing',n:6,c:1},
-  {k:'egg',nm:'Egg',n:6},{k:'palm',nm:'Palm of meat/fish',n:25},{k:'milk',nm:'Milk glass',n:8},{k:'whey',nm:'Whey scoop',n:24},{k:'rice',nm:'Rice cup',n:4},
+  {k:'palm',nm:'Palm',n:25,c:2},{k:'mcup',nm:'1 cup',n:35,c:2},{k:'mhalf',nm:'½ cup',n:18,c:2},
+  {k:'egg',nm:'Egg',n:6},{k:'bar',nm:'Protein bar',n:10},{k:'whey',nm:'Whey scoop',n:24},{k:'milk',nm:'Milk glass',n:8},{k:'rice',nm:'Rice cup',n:4},
 ];
 /* muscles each lift works (share of a set) */
 const EXM = {
@@ -658,7 +669,7 @@ const DOCS = ['state','history','lifts','body'];
 const LS_KEY = 'ascan-campaign-v1';
 let S = null;
 
-function freshToday(d, m, len){ return {d, m:m||'push', len:len||3, ex:{}, vit:{c:false,dha:false,zn:false}, p:0, pl:[], fc:{}}; }
+function freshToday(d, m, len){ return {d, m:m||'push', len:len||3, lm:{}, ex:{}, vit:{c:false,dha:false,zn:false}, p:0, pl:[], fc:{}}; }
 function defaults(){
   const t = today(), x = {};
   for (const [id,e] of Object.entries(EX)) if (e.b) x[id] = [{d:'base', w:e.b[0], u:e.b[1], h:0}];
@@ -684,6 +695,7 @@ function normalize(s){
   st.today.ex = st.today.ex && typeof st.today.ex==='object' ? st.today.ex : {};
   st.today.pl = Array.isArray(st.today.pl) ? st.today.pl : [];
   st.today.fc = st.today.fc && typeof st.today.fc==='object' ? st.today.fc : {};
+  st.today.lm = st.today.lm && typeof st.today.lm==='object' ? st.today.lm : {};
   st.today.m = mapM(st.today.m);
   if (!MISSIONS.some(m=>m.id===st.today.m)) st.today.m = 'push';
   s.history.days = s.history.days && typeof s.history.days==='object' ? s.history.days : {};
@@ -700,25 +712,39 @@ const T = () => S.state.today;
 const missionOf = id => MISSIONS.find(m=>m.id===mapM(id)) || MISSIONS[0];
 const missionItems = (m, len) => m.slots.filter(s=>s.t<=len).map(s=>s.id);
 const isPri = (m, id) => { const sl = m.slots.find(s=>s.id===id); return !!sl && sl.t===1 && !EX[id].nw; };
-function slotSpec(mid, id){ const sl = missionOf(mid).slots.find(x=>x.id===id); return {rx:(sl&&sl.rx)||'', s:(sl&&sl.s)||3}; }
+function slotSpec(mid, id){ const sl = missionOf(mid).slots.find(x=>x.id===id) || MISSIONS.map(m=>m.slots.find(x=>x.id===id)).find(Boolean); return {rx:(sl&&sl.rx)||'', s:(sl&&sl.s)||3}; }
 function estMinutes(m, len){
   let min = len===3 ? 10 : 5;
   for (const sl of m.slots) if (sl.t<=len){ if (sl.id==='cardio') min += 25; else if (!EX[sl.id].nw) min += sl.s*3; }
   return Math.round(min/5)*5;
 }
 function liftsDone(t=T()){ return Object.entries(t.ex).filter(([id,e])=>e && e.done && EX[id] && !EX[id].nw).length; }
-const isCounted = (t=T()) => liftsDone(t) >= 3;
-function isFull(t=T()){ return missionItems(missionOf(t.m), t.len).every(id => t.ex[id] && t.ex[id].done); }
+/* a session = 3+ lifts of one group. Two groups in a day = two sessions (e.g. Standard Push + Short Pull) */
+function missionLifts(t, mid){ return missionOf(mid).slots.filter(s => !EX[s.id].nw && t.ex[s.id] && t.ex[s.id].done); }
+function doneLen(t, mid){ const sl = missionLifts(t, mid); return sl.length ? Math.max(...sl.map(s=>s.t)) : 0; }
+function missionsDone(t=T()){
+  const out = MISSIONS.filter(m => missionLifts(t, m.id).length >= 3).map(m => m.id);
+  if (!out.length && liftsDone(t) >= 3){ let best = t.m, bn = -1; for (const m of MISSIONS){ const n = missionLifts(t, m.id).length; if (n > bn){ bn = n; best = m.id; } } out.push(best); }
+  return out;
+}
+function lenOf(t, mid){ const d = doneLen(t, mid); return mid===t.m ? Math.max(t.len, d) : (Math.max((t.lm||{})[mid] || 0, d) || t.len); }
+const missionFull = (t, mid) => missionItems(missionOf(mid), lenOf(t, mid)).every(id => t.ex[id] && t.ex[id].done);
+const isCounted = (t=T()) => missionsDone(t).length > 0;
+function isFull(t=T()){ const ms = missionsDone(t); return ms.length > 0 && ms.every(m => missionFull(t, m)); }
+const dayMissions = r => !r ? [] : Array.isArray(r.ms) ? r.ms.map(mapM) : (r.c ? [mapM(r.m)] : []);
 function groupSets(t){ const g={push:0,pull:0,legs:0,core:0}; for (const [id,e] of Object.entries(t.ex)) if (e && e.done && EX[id] && g[EX[id].g]!==undefined) g[EX[id].g] += slotSpec(t.m,id).s; return g; }
 const vitCount = (t=T()) => ['c','dha','zn'].filter(k=>t.vit[k]).length;
 const proteinTarget = () => Math.round(S.state.profile.kg*S.state.profile.pf);
 
+/* gym days (for week target, streak, readiness) */
 function sessions(){
   const t = T().d, out = [];
-  for (const [d,r] of Object.entries(S.history.days)) if (r && r.c && d!==t) out.push({d, m:mapM(r.m)});
-  if (isCounted()) out.push({d:t, m:T().m});
+  for (const [d,r] of Object.entries(S.history.days)) if (r && r.c && d!==t) out.push({d, ms:dayMissions(r)});
+  if (isCounted()) out.push({d:t, ms:missionsDone()});
   return out.sort((a,b)=> a.d<b.d ? -1 : a.d>b.d ? 1 : 0);
 }
+/* sessions (for rank, tree, totals): a double day counts twice */
+const missionTotal = () => sessions().reduce((a,s)=>a + Math.max(1, s.ms.length), 0);
 function daysSinceLast(){ const s = sessions(); return s.length ? dayDiff(s[s.length-1].d, today()) : null; }
 function gapBeforeToday(){ const s = sessions().filter(x=>x.d<today()); return s.length ? dayDiff(s[s.length-1].d, today()) : null; }
 /* planner: the most-behind group that has had two full rest days */
@@ -728,7 +754,7 @@ function groupLast(){
     const g = EX[id] ? EX[id].g : null; if (!g || !(g in last) || !Array.isArray(arr)) continue;
     for (const e of arr){ if (!e || e.d==='base' || e.d>=t) continue; if (!last[g] || e.d>last[g]) last[g] = e.d; }
   }
-  for (const [d,r] of Object.entries(S.history.days)){ const g = mapM(r && r.m); if (r && r.c && (g in last) && d<t && (!last[g] || d>last[g])) last[g] = d; }
+  for (const [d,r] of Object.entries(S.history.days)){ if (!r || !r.c || d>=t) continue; for (const g of dayMissions(r)) if ((g in last) && (!last[g] || d>last[g])) last[g] = d; }
   return last;
 }
 function plan(){
@@ -746,19 +772,28 @@ function plan(){
     const deficit = tot>=12 ? Math.max(-1, Math.min(1, (exp - sets[g])/Math.max(1,exp))) : 0;
     info[g] = {g, d, resting: d!==null && d<REST_DAYS, readyOn: last[g] ? addDays(last[g], REST_DAYS) : t, deficit, sets:sets[g], score:(d===null ? 30 : Math.min(d,30)) + 4*deficit};
   }
-  const order = MISSIONS.map(m=>info[m.id]), elig = order.filter(x=>!x.resting), pool = elig.length ? elig : order;
-  let best = pool[0]; for (const x of pool) if (x.score > best.score + 1e-9) best = x;
-  const due = anyHist && !best.resting && (best.d===null || best.d>=7 || best.deficit>=0.5);
-  return {next:best.g, info, due, allResting:!elig.length};
+  /* groups already done today drop out, so NEXT points at an open group for a second session */
+  const done = missionsDone();
+  for (const g in info) info[g].today = done.includes(g);
+  const order = MISSIONS.map(m=>info[m.id]), open = order.filter(x=>!x.resting && !x.today);
+  let best;
+  if (open.length){ best = open[0]; for (const x of open) if (x.score > best.score + 1e-9) best = x; }
+  else best = order.find(x=>x.today) || order.slice().sort((a,b)=> a.readyOn<b.readyOn ? -1 : a.readyOn>b.readyOn ? 1 : 0)[0];
+  const due = open.length>0 && anyHist && (best.d===null || best.d>=7 || best.deficit>=0.5);
+  return {next:best.g, info, due, allResting:!open.length && !done.length, doneToday:done};
 }
 const recommended = () => plan().next;
 function todayHas(g){ return Object.entries(T().ex).some(([id,e]) => e && e.done && EX[id] && EX[id].g===g); }
 function blockReason(g, P){
-  if (todayHas(g) || P.allResting) return null;
+  if (todayHas(g)) return null;   /* started today: keep going */
   const inf = P.info[g];
-  if (inf.resting) return `Resting · ready ${DOW[parseD(inf.readyOn).getDay()]}`;
+  if (inf.resting) return `Cooldown · ready ${DOW[parseD(inf.readyOn).getDay()]}`;
   if (P.due && g!==P.next) return `After ${missionOf(P.next).name}`;
   return null;
+}
+function whyLong(g, P){
+  const inf = P.info[g];
+  return inf.resting ? `${missionOf(g).name} is in cooldown until ${DOW[parseD(inf.readyOn).getDay()]}.` : `${missionOf(P.next).name} is due. Do it first.`;
 }
 const weekCount = () => { const mon = mondayOf(today()); return sessions().filter(s=>s.d>=mon).length; };
 function weekStreak(){
@@ -853,8 +888,8 @@ function compile(t){
   const n = liftsDone(t);
   const any = n>0 || t.p>0 || vitCount(t)>0 || Object.values(t.ex).some(e=>e&&e.done);
   if (!any) return;
-  const g = groupSets(t);
-  S.history.days[t.d] = {m:t.m, n, len:t.len, c:n>=3?1:0, full:isFull(t)?1:0, p:t.p, pt:proteinTarget(), v:vitCount(t), g:GROUPS.map(k=>g[k])};
+  const g = groupSets(t), ms = missionsDone(t);
+  S.history.days[t.d] = {m:ms[0]||t.m, ms, ml:ms.map(x=>lenOf(t,x)), n, len:ms.length ? lenOf(t,ms[0]) : t.len, c:ms.length?1:0, full:isFull(t)?1:0, p:t.p, pt:proteinTarget(), v:vitCount(t), g:GROUPS.map(k=>g[k])};
 }
 function rollover(){
   const t = today();
@@ -1233,7 +1268,7 @@ let tab = 'today', selectedCell = null, lastFull = null, lastCounted = null, par
 let recView = 'month', recMonth = null, recYear = null, hudBuilt = false;
 
 function renderTree(r, st){
-  const {H, last} = muscleState(), t = today(), n = sessions().length, ds = daysSinceLast();
+  const {H, last} = muscleState(), t = today(), n = missionTotal(), ds = daysSinceLast();
   let G = 0.36 + 0.64*(1 - Math.exp(-n/160));
   G = Math.max(0.26, G - (ds===null ? 0 : Math.min(0.22, Math.max(0, (ds-21)/150))));
   const V = n===0 ? 0.3 : Math.max(0.12, Math.min(1, 0.15 + 0.85*r.score/100));
@@ -1257,7 +1292,7 @@ function renderHero(){
   $('score').innerHTML = `${r.score}<small>%</small>`;
   $('statChip').textContent = st.label;
   renderTree(r, st);
-  const total = sessions().length;
+  const total = missionTotal();
   let ri = 0; for (let i=0;i<RANKS.length;i++) if (total>=RANKS[i][0]) ri = i;
   $('rank').textContent = RANKS[ri][1];
   const nxt = RANKS[ri+1];
@@ -1265,11 +1300,15 @@ function renderHero(){
     $('rankBar').style.width = `${Math.round((total-RANKS[ri][0])/(nxt[0]-RANKS[ri][0])*100)}%`;
     $('rankSub').textContent = `${nxt[0]-total} more → ${nxt[1]}`;
   } else { $('rankBar').style.width = '100%'; $('rankSub').textContent = `${total} sessions · top rank`; }
-  const counted = isCounted(), full = counted && isFull(), tag = $('scanTag');
-  tag.textContent = full ? 'SESSION COMPLETE' : 'SESSION LOGGED';
+  const ms = missionsDone(), counted = ms.length>0, full = counted && isFull(), tag = $('scanTag');
+  tag.textContent = ms.length>1 ? `${ms.length} SESSIONS TODAY` : full ? 'SESSION COMPLETE' : 'SESSION LOGGED';
   tag.classList.toggle('show', counted);
-  if (lastCounted!==null && ((counted && !lastCounted) || (full && !lastFull))) toast(full ? 'Session complete.' : 'Session logged.');
-  lastCounted = counted; lastFull = full;
+  if (lastCounted!==null){
+    const added = ms.filter(x=>!lastCounted.includes(x));
+    if (added.length) toast(lastCounted.length ? `${missionOf(added[0]).name} logged. ${ms.length} sessions today.` : 'Session logged.');
+    else if (full && !lastFull) toast('Session complete.');
+  }
+  lastCounted = ms; lastFull = full;
 }
 
 function renderPoll(){
@@ -1416,7 +1455,7 @@ function alertMsg(){
   if (isCounted()) return isFull() ? {k:'go', t:'Session complete. Eat, sleep, recover.'} : {k:'go', t:'Logged. Finish the list to complete it.'};
   if (ds===null) return {k:'build', t:'Day 1. Train to grow the tree.'};
   if (ds>=14) return {k:'nogo', t:`${ds} days off. Regression risk: weights start at 90%.`};
-  if (P.allResting) return {k:'hold', t:'All groups resting. Rest day or conditioning only.'};
+  if (P.allResting) return {k:'hold', t:'Push, Pull and Legs are in cooldown. Rest day.'};
   if (P.due) return {k:'hold', t: inf.d===null ? `${nm} not trained yet. ${nm} today.` : inf.d>=7 ? `${nm} overdue: ${inf.d} days. ${nm} today.` : `${nm} is behind on sets. ${nm} today.`};
   if (ds>=7) return {k:'hold', t:`${ds} days off. Do a Short session today.`};
   if (ds>=4) return {k:'hold', t:`${ds} days since last session. Go soon.`};
@@ -1442,14 +1481,20 @@ function metaHtml(id){
 
 function renderMission(){
   const P = plan(), t = T();
-  const anyDone = Object.values(t.ex).some(e=>e && e.done);
-  if (!anyDone && blockReason(t.m, P)){ t.m = P.next; markDirty('state'); }
-  const m = missionOf(t.m);
+  if (!todayHas(t.m) && blockReason(t.m, P) && !blockReason(P.next, P)){ t.m = P.next; const L = (t.lm||{})[t.m]; if (L) t.len = L; markDirty('state'); }
+  const m = missionOf(t.m), blocked = blockReason(t.m, P);
   $('picker').innerHTML = MISSIONS.map(x=>{
-    const why = blockReason(x.id, P);
-    const tag = x.id===P.next ? `<span class="rec${P.due?' due':''}">${P.due?'DUE':'NEXT'}</span>` : '';
-    return `<button class="pick" data-act="mission" data-id="${x.id}" aria-pressed="${x.id===t.m}"${why?` aria-disabled="true" data-why="${why}"`:''}>${tag}<span class="L">${x.name}</span><span class="nm">${why || x.sub}</span></button>`;
+    const why = blockReason(x.id, P), doneT = P.doneToday.includes(x.id);
+    const tag = doneT ? '<span class="rec done">DONE</span>' : (x.id===P.next && !why) ? `<span class="rec${P.due?' due':''}">${P.due?'DUE':'NEXT'}</span>` : '';
+    return `<button class="pick" data-act="mission" data-id="${x.id}" aria-pressed="${x.id===t.m && !blocked}"${why?` aria-disabled="true" data-why="${whyLong(x.id,P)}"`:''}>${tag}<span class="L">${x.name}</span><span class="nm">${why || x.sub}</span></button>`;
   }).join('');
+  $('lens').hidden = !!blocked; $('tally').hidden = !!blocked;
+  if (blocked){
+    const rows = MISSIONS.map(x=>{ const inf = P.info[x.id]; const st = P.doneToday.includes(x.id) ? 'Done today' : inf.resting ? `Ready ${DOW[parseD(inf.readyOn).getDay()]}` : (blockReason(x.id,P) || 'Open'); return `<div class="cool-r"><span>${x.name}</span><span>${st}</span></div>`; }).join('');
+    $('list').innerHTML = `<li class="cool"><b>${P.allResting ? 'Rest day' : `${m.name} is in cooldown`}</b><p>Every group is still recovering from its last session. Rest today.</p>${rows}</li>`;
+    $('missionAside').textContent = 'Cooldown';
+    return;
+  }
   $('lens').innerHTML = LENS.map(l=>`<button data-act="len" data-v="${l.v}" aria-pressed="${t.len===l.v}">${l.nm}<small>${fmtMin(estMinutes(m,l.v))}</small></button>`).join('');
   const items = missionItems(m, t.len);
   $('list').innerHTML = items.map(id=>{
@@ -1483,7 +1528,8 @@ function renderFuel(){
   $('fuelPanel').classList.toggle('hit', p>=pt);
   $('fuelRule').textContent = `${S.state.profile.pf} g/kg`;
   const chip = f => { const c = t.fc[f.k]||0; return `<button class="chip" data-act="food" data-k="${f.k}">${f.nm} <span class="g">${f.n}</span>${c?`<span class="cnt">×${c}</span>`:''}</button>`; };
-  $('foodsChicken').innerHTML = FOODS.filter(f=>f.c).map(chip).join('');
+  $('foodsChicken').innerHTML = FOODS.filter(f=>f.c===1).map(chip).join('');
+  $('foodsMeat').innerHTML = FOODS.filter(f=>f.c===2).map(chip).join('');
   $('foodsOther').innerHTML = FOODS.filter(f=>!f.c).map(chip).join('');
 }
 function renderVitals(){
@@ -1545,11 +1591,11 @@ function renderProgram(){
   }).join('');
 }
 
-function liveRecord(){ const t = T(); const g = groupSets(t); return {m:t.m, n:liftsDone(t), len:t.len, c:isCounted()?1:0, full:isCounted()&&isFull()?1:0, p:t.p, pt:proteinTarget(), v:vitCount(t), g:GROUPS.map(k=>g[k])}; }
+function liveRecord(){ const t = T(), g = groupSets(t), ms = missionsDone(t); return {m:ms[0]||t.m, ms, ml:ms.map(x=>lenOf(t,x)), n:liftsDone(t), len:t.len, c:ms.length?1:0, full:isFull(t)?1:0, p:t.p, pt:proteinTarget(), v:vitCount(t), g:GROUPS.map(k=>g[k])}; }
 function recordFor(d){ return d===today() ? liveRecord() : S.history.days[d]; }
 function dayClass(r){
   if (!r) return '';
-  if (r.c) return (r.len===1 || r.ato) ? 'ms' : 'm';
+  if (r.c){ const ml = Array.isArray(r.ml) && r.ml.length ? r.ml : [r.len]; return (ml.every(x=>x===1) || r.ato) ? 'ms' : 'm'; }
   if (r.n>0) return 'p';
   if (r.v===3 && r.p>=(r.pt||1)) return 'h';
   if (r.p>0 || r.v>0) return 'o';
@@ -1566,7 +1612,7 @@ function cellBtn(d, t, cs){
 }
 function rangeStats(from, to){
   const out = {s:0, push:0, pull:0, legs:0, pd:0, vd:0};
-  const add = r => { if (!r) return; if (r.c){ out.s++; const m = mapM(r.m); if (out[m]!==undefined) out[m]++; } if (r.p>0 && r.p>=(r.pt||1)) out.pd++; if (r.v===3) out.vd++; };
+  const add = r => { if (!r) return; if (r.c) for (const m of dayMissions(r)){ out.s++; if (out[m]!==undefined) out[m]++; } if (r.p>0 && r.p>=(r.pt||1)) out.pd++; if (r.v===3) out.vd++; };
   for (const [d,r] of Object.entries(S.history.days)) if (d>=from && d<=to && d!==today()) add(r);
   if (today()>=from && today()<=to) add(liveRecord());
   return out;
@@ -1616,7 +1662,7 @@ function renderLog(){
   const pHit = rec30.filter(r=>r.p>0 && r.p>=(r.pt||proteinTarget())).length;
   const vHit = rec30.filter(r=>r.v===3).length;
   $('tiles').innerHTML = [
-    [all.length, 'Sessions'],
+    [missionTotal(), 'Sessions'],
     [`${weekStreak()}<small> wk</small>`, `Streak · ${target}+/wk`],
     [`${pHit}<small>/${rec30.length}</small>`, 'Protein · 30d'],
     [`${vHit}<small>/${rec30.length}</small>`, 'Vitamins · 30d'],
@@ -1643,8 +1689,8 @@ function renderLog(){
 function cellText(d){
   const r = recordFor(d);
   if (!r) return `<b>${niceDate(d)}</b> · No log.`;
-  const nm = missionOf(r.m).name, ln = r.len ? LENS[r.len-1].nm : (r.ato ? 'Short' : '');
-  const parts = [r.c ? `${nm}${ln?' '+ln:''} · ${r.n} lifts` : r.n>0 ? `${r.n} lifts (partial)` : 'Rest', `protein ${r.p}/${r.pt} g`, `vitamins ${r.v}/3`];
+  const what = dayMissions(r).map((m,i)=>{ const L = Array.isArray(r.ml) ? r.ml[i] : (r.len || (r.ato ? 1 : 0)); return `${missionOf(m).name}${L ? ' '+LENS[L-1].nm : ''}`; }).join(' + ');
+  const parts = [r.c ? `${what} · ${r.n} lifts` : r.n>0 ? `${r.n} lifts (partial)` : 'Rest', `protein ${r.p}/${r.pt} g`, `vitamins ${r.v}/3`];
   return `<b>${niceDate(d)}</b> · ${parts.join(' · ')}`;
 }
 function renderBodyChart(){
@@ -1713,9 +1759,19 @@ document.addEventListener('click', ev=>{
       if (paramsOpen) renderParams();
       return;
     }
-    case 'mission': if (b.getAttribute('aria-disabled')==='true'){ toast(b.dataset.why); return; } t.m = id; markDirty('state'); break;
-    case 'len': t.len = Number(b.dataset.v); S.state.profile.len = t.len; markDirty('state'); break;
+    case 'mission': {
+      if (b.getAttribute('aria-disabled')==='true'){ toast(b.dataset.why); return; }
+      t.m = id; const L = (t.lm||{})[id] || doneLen(t, id); if (L) t.len = L;
+      markDirty('state'); break;
+    }
+    case 'len': {
+      t.len = Number(b.dataset.v); t.lm = Object.assign({}, t.lm, {[t.m]: t.len});
+      if (!missionsDone().some(x=>x!==t.m)) S.state.profile.len = t.len;   /* a short second session doesn't change your default */
+      markDirty('state'); break;
+    }
     case 'check': {
+      const P = plan(), why = blockReason(t.m, P);
+      if (why){ toast(whyLong(t.m, P)); return; }
       const r = ensureRow(id);
       if (!r.done && !EX[id].nw && !(r.w>0)){ toast('Enter the weight first.'); const inp = $('w-'+id); if (inp) inp.focus(); return; }
       r.done = !r.done; syncLift(id); markDirty('state','lifts');
